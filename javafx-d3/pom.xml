@@ -107,7 +107,7 @@
 							<tasks>
 								<replace token="JavaSE-1.8&#34;&#62;"
 									value="JavaSE-1.8&#34;&#62;&#13; &#60;accessrules&#62;&#13; &#60;accessrule kind=&#34;accessible&#34; pattern=&#34;netscape/**&#34;/&#62;&#13; &#60;accessrule kind=&#34;accessible&#34; pattern=&#34;javafx/**&#34;/&#62;&#13; &#60;accessrule kind=&#34;accessible&#34; pattern=&#34;com/sun/javafx/**&#34;/&#62;&#13;&#60;/accessrules&#62;"
-									file=".classpath">
+									file=".antrun.classpath">
 								</replace>
 							</tasks>
 						</configuration>
