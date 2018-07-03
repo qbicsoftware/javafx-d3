@@ -3,7 +3,37 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>javafx-d3</groupId>
 	<artifactId>javafx-d3</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.2-SNAPSHOT</version>
+
+	<repositories>
+		<repository>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+				<checksumPolicy>fail</checksumPolicy>
+			</snapshots>
+			<id>nexus-snapshots</id>
+			<name>QBiC Snapshots</name>
+			<url>https://qbic-repo.am10.uni-tuebingen.de/repository/maven-snapshots</url>
+		</repository>
+		<repository>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+				<checksumPolicy>fail</checksumPolicy>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<id>nexus-releases</id>
+			<name>QBiC Releases</name>
+			<url>https://qbic-repo.am10.uni-tuebingen.de/repository/maven-releases</url>
+		</repository>
+	</repositories>
+
 	<build>
 
 		<sourceDirectory>main/java</sourceDirectory>
@@ -59,7 +89,7 @@
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.3</version>
+				<version>3.7.0</version>
 				<configuration>
 					<source>1.8</source>
 					<target>1.8</target>
@@ -77,7 +107,7 @@
 							<tasks>
 								<replace token="JavaSE-1.8&#34;&#62;"
 									value="JavaSE-1.8&#34;&#62;&#13; &#60;accessrules&#62;&#13; &#60;accessrule kind=&#34;accessible&#34; pattern=&#34;netscape/**&#34;/&#62;&#13; &#60;accessrule kind=&#34;accessible&#34; pattern=&#34;javafx/**&#34;/&#62;&#13; &#60;accessrule kind=&#34;accessible&#34; pattern=&#34;com/sun/javafx/**&#34;/&#62;&#13;&#60;/accessrules&#62;"
-									file=".classpath">
+									file=".antrun.classpath">
 								</replace>
 							</tasks>
 						</configuration>
@@ -90,4 +120,71 @@
 
 		</plugins>
 	</build>
+
+	<profiles>
+		<!-- enforces that version strings are development versions, i.e., they contain the suffix -SNAPSHOT -->
+		<profile>
+			<id>development-build</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-enforcer-plugin</artifactId>
+						<version>3.0.0-M2</version>
+						<executions>
+							<execution>
+								<id>enforce-no-releases</id>
+								<goals>
+									<goal>enforce</goal>
+								</goals>
+								<configuration>
+									<rules>
+										<requireSnapshotVersion>
+											<message>No releases allowed. Version must end with "-SNAPSHOT". Check that the &lt;version&gt; tag contains a non-release version string.</message>
+										</requireSnapshotVersion>
+									</rules>
+									<fail>true</fail>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<!-- enforces that version strings are release versions, i.e., they do not contain the suffix -SNAPSHOT -->
+			<id>release-build</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-enforcer-plugin</artifactId>
+						<version>3.0.0-M2</version>
+						<executions>
+							<execution>
+								<id>enforce-no-snapshots</id>
+								<goals>
+									<goal>enforce</goal>
+								</goals>
+								<configuration>
+									<rules>
+										<requireReleaseVersion>
+											<message>Only release versions are allowed. The suffix "-SNAPSHOT" is not allowed in release versions. Check that the &lt;version&gt; contains a release version string.</message>
+										</requireReleaseVersion>
+									</rules>
+									<fail>true</fail>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>
